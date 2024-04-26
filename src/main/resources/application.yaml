@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: Digital Bookshelf
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/master.xml
+
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    driver-class-name: org.postgresql.Driver
+
+  rabbitmq:
+    host: ${RABBIT_HOST}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
+    port: ${RABBIT_PORT}
+
+#todo CHANGE SECRET AND REMOVE TO ENV. THAT'S ONLY FOR TEST!
+
+file-storage:
+  url: http://localhost:8080/api/v1/asset/get/
+
+#access and refresh in hours.
+security:
+  jwt:
+    secret: amJ1eWd0aXZmdHlyY2Z5dWdpdW9ndW95Z2l1Z295dWd5dW9ndXlmdHlmdXlndXR5dWpndXlvZ3l2aXBqaWhpdWl1aGlqbmlqbg==
+    access: ${ACCESS_JWT_TOKEN_AGE}
+    refresh: ${REFRESH_JWT_TOKEN_AGE}
+
+s3-aws:
+  url: ${S3_URL}
+  accessKey: minioroot
+  secretKey: minioroot
+  bucket: meme-store-bucket
+
+typesense:
+  protocol: http
+  host: ${TYPESENS_HOST}
+  port: 8108
+  apiKey: somekey
+  collection-name: meme
+
+#springdoc:
+#  override-with-generic-response: false
+
+filter:
+  rabbit:
+    queue: ${FILTER_QUEUE}
+    exchange: ${FILTER_EXCHANGE}
+  baseUrl: ${FILTER_BASEURL}
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
