@@ -63,12 +63,7 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(configurer ->
                         configurer
-                                .requestMatchers("/api/v1/service/tg/external_user/**").permitAll()
-                                .requestMatchers("/api/v1/meme/**").permitAll()
-                                .requestMatchers("/api/v1/search/**").permitAll()
-                                .requestMatchers("/api/v1/asset/suggest_tags").permitAll()
-                                .requestMatchers("/api/v1/asset/get_info").permitAll()
-                                .requestMatchers("/api/v1/asset/get/**").permitAll()
+                                .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated())
