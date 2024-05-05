@@ -3,7 +3,8 @@ package com.brash.digital_bookshelf.config;
 import com.brash.digital_bookshelf.data.entity.AuthorityRole;
 import com.brash.digital_bookshelf.data.enums.Role;
 import com.brash.digital_bookshelf.data.repository.AuthorityRoleRepository;
-import com.brash.digital_bookshelf.data.service.UserService;
+import com.brash.digital_bookshelf.s3storage.S3Client;
+import com.brash.digital_bookshelf.s3storage.config.S3Properties;
 import com.brash.digital_bookshelf.usecase.AuthUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,10 +22,21 @@ public class ApplicationInitializer implements CommandLineRunner {
 
     private final AuthUseCase authUseCase;
 
+    private final S3Client minioClient;
+
+    private final S3Properties s3Properties;
+
     @SneakyThrows
     @Override
     public void run(String... args) {
         insertAuthorityRoles();
+        initBuckets();
+    }
+
+    void initBuckets() {
+        minioClient.createBucketIfNotExist(s3Properties.getBookBucket());
+        minioClient.createBucketIfNotExist(s3Properties.getBookImageBucket());
+        minioClient.createBucketIfNotExist(s3Properties.getProfileImageBucket());
     }
 
     void insertAuthorityRoles() {

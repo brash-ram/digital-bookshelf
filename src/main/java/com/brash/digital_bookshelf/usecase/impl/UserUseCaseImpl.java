@@ -4,8 +4,11 @@ import com.brash.digital_bookshelf.data.entity.User;
 import com.brash.digital_bookshelf.data.repository.UserRepository;
 import com.brash.digital_bookshelf.dto.user.ChangeUserInfoRequest;
 import com.brash.digital_bookshelf.dto.user.ChangeUserRefsRequest;
+import com.brash.digital_bookshelf.s3storage.S3Client;
+import com.brash.digital_bookshelf.s3storage.config.S3Properties;
 import com.brash.digital_bookshelf.usecase.UserUseCase;
 import com.brash.digital_bookshelf.utils.AuthUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,8 @@ public class UserUseCaseImpl implements UserUseCase {
     private final AuthUtils authUtils;
 
     private final UserRepository userRepository;
+
+    private final S3Properties s3Properties;
 
     @Transactional
     @Override

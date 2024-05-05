@@ -9,14 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -42,10 +40,17 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @NonNull
     private Set<AuthorityRole> roles = new HashSet<>();
 
+
+    @ManyToOne
+    @JoinColumn(name = "profile_image_id")
+    private Image profileImage;
 
     @Column(name = "name")
     private String name;
@@ -75,6 +80,10 @@ public class User implements UserDetails {
 
     @Column(name = "refEmail")
     private String refEmail;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Date createdAt;
 
 
     public List<Role> getEnumRoles() {

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class BasicApiResponse<T> {
-    private boolean error = false;
+    private boolean error;
     private T result;
 
     public BasicApiResponse(boolean error, T result) {
@@ -12,6 +12,7 @@ public class BasicApiResponse<T> {
         this.result = result;
     }
     public BasicApiResponse(T result) {
+        this.error = false;
         this.result = result;
     }
 }

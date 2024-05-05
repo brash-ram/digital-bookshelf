@@ -5,20 +5,33 @@ networks:
 
 services:
   core:
-    container_name: application_container
-    image: application_image
+    container_name: digital-bookshelf-core
+    image: digital-bookshelf-core
     depends_on:
 #      - rabbitmq
       - postgres
-#      - minio
+      - minio
 #      - filter
     build:
       context: .
-    restart: on-failure
+    restart: no
     env_file:
       - .docker.env
     ports:
       - "8080:8080"
+    networks:
+      - backend
+
+  postgres:
+    container_name: digital-bookshelf-postgres
+    image: postgres:13-alpine
+    restart: on-failure
+    env_file:
+      - .docker.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/dbdata:/var/lib/postgresql/data
     networks:
       - backend
 
@@ -52,36 +65,25 @@ services:
 #    networks:
 #      - backend
 
-  postgres:
-    container_name: meme-store-postgres
-    image: postgres:13-alpine
+  minio:
+    image: minio/minio:latest
+    container_name: digital-bookshelf-minio
     restart: on-failure
     env_file:
       - .docker.env
+    command: server /minio --console-address :9090
     ports:
-      - "5432:5432"
+      - '9090:9090'
+      - '9000:9000'
     volumes:
-      - ./volumes/dbdata:/var/lib/postgresql/data
+      - ./volumes/minio-data:/minio
     networks:
       - backend
-
-#  minio:
-#    image: minio/minio:latest
-#    container_name: meme-store-minio
-#    restart: on-failure
-#    env_file:
-#      - .docker.env
-#    environment:
-#      - MINIO_ROOT_USER=${MINIO_USER}
-#      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
-#    command: server /minio --console-address :9090
-#    ports:
-#      - '9090:9090'
-#      - '9000:9000'
-#    volumes:
-#      - ./volumes/minio-data:/minio
-#    networks:
-#      - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 #  typesense:
 #    image: typesense/typesense:0.25.2

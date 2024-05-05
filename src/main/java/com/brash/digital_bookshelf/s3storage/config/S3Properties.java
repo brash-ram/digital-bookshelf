@@ -12,5 +12,7 @@ public class S3Properties {
     private String url;
     private String accessKey;
     private String secretKey;
-    private String bucket;
+    private String bookBucket;
+    private String bookImageBucket;
+    private String profileImageBucket;
 }

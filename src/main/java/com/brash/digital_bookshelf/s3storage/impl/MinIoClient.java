@@ -4,7 +4,7 @@ package com.brash.digital_bookshelf.s3storage.impl;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.brash.digital_bookshelf.s3storage.S3Client;
-import com.brash.digital_bookshelf.s3storage.dto.File;
+import com.brash.digital_bookshelf.s3storage.S3File;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -27,34 +27,32 @@ public class MinIoClient implements S3Client {
 
     @Override
     @SneakyThrows
-    public void put(File file, String bucket) {
-        byte[] content = file.getContent();
+    public void put(S3File s3File, String bucket) {
+        byte[] content = s3File.getContent();
         @Cleanup InputStream inputStream = new ByteArrayInputStream(content);
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(content.length);
 
-        s3.putObject(
-                new PutObjectRequest(bucket, file.getFilename(), inputStream, metadata)
-        );
+        s3.putObject(new PutObjectRequest(bucket, s3File.getFilename(), inputStream, metadata));
     }
 
     @Override
     @SneakyThrows
-    public byte[] get(File file, String bucket) {
+    public byte[] get(String filename, String bucket) {
         S3Object s3Object = s3.getObject(
-                new GetObjectRequest(bucket, file.getFilename())
+                new GetObjectRequest(bucket, filename)
         );
         return s3Object.getObjectContent().readAllBytes();
     }
 
     @Override
-    public boolean isFileExist(File file, String bucket) {
-        return s3.doesObjectExist(bucket, file.getFilename());
+    public boolean isFileExist(String filename, String bucket) {
+        return s3.doesObjectExist(bucket, filename);
     }
 
     @Override
-    public void delete(File file, String bucket) {
-        s3.deleteObject(new DeleteObjectRequest(bucket, file.getFilename()));
+    public void delete(String filename, String bucket) {
+        s3.deleteObject(new DeleteObjectRequest(bucket, filename));
     }
 }

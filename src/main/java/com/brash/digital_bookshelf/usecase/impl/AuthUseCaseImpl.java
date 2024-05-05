@@ -1,6 +1,7 @@
 package com.brash.digital_bookshelf.usecase.impl;
 
 import com.brash.digital_bookshelf.data.entity.AuthorityRole;
+import com.brash.digital_bookshelf.data.entity.Image;
 import com.brash.digital_bookshelf.data.entity.User;
 import com.brash.digital_bookshelf.data.enums.Role;
 import com.brash.digital_bookshelf.data.repository.AuthorityRoleRepository;
@@ -9,8 +10,12 @@ import com.brash.digital_bookshelf.data.service.UserService;
 import com.brash.digital_bookshelf.dto.auth.AuthResponse;
 import com.brash.digital_bookshelf.exception.AccessDeniedException;
 import com.brash.digital_bookshelf.exception.ResourceNotFoundException;
+import com.brash.digital_bookshelf.s3storage.S3File;
 import com.brash.digital_bookshelf.security.jwt.JwtTokenProvider;
+import com.brash.digital_bookshelf.service.FileService;
+import com.brash.digital_bookshelf.service.RobohashClient;
 import com.brash.digital_bookshelf.usecase.AuthUseCase;
+import com.brash.digital_bookshelf.usecase.ImageUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -33,6 +39,10 @@ public class AuthUseCaseImpl implements AuthUseCase {
     private final AuthorityRoleRepository authorityRoleRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final ImageUseCase imageUseCase;
+
+    private final Random random = new Random();
 
     @Override
     public AuthResponse refresh(String refreshToken) {
@@ -61,7 +71,12 @@ public class AuthUseCaseImpl implements AuthUseCase {
         User user = new User()
                 .setUsername(username)
                 .setPassword(passwordEncoder.encode(password))
+                .setName(generateName())
                 .setRoles(getDefaultRoles());
+
+        Image profileImage = imageUseCase.getProfileImageFromRobohash(user);
+        user.setProfileImage(profileImage);
+
         user = userRepository.save(user);
         setAuthentication(user);
         return new AuthResponse(
@@ -83,5 +98,9 @@ public class AuthUseCaseImpl implements AuthUseCase {
         return Set.of(
                 authorityRoleRepository.getAuthorityRoleByName(Role.USER)
         );
+    }
+
+    private String generateName() {
+        return "Пользователь " + random.nextInt(1000000, 9999999);
     }
 }
