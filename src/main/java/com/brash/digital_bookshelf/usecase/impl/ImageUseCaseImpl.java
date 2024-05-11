@@ -5,6 +5,7 @@ import com.brash.digital_bookshelf.data.entity.User;
 import com.brash.digital_bookshelf.data.repository.ImageRepository;
 import com.brash.digital_bookshelf.data.service.ImageService;
 import com.brash.digital_bookshelf.s3storage.S3File;
+import com.brash.digital_bookshelf.s3storage.config.S3Properties;
 import com.brash.digital_bookshelf.service.FileService;
 import com.brash.digital_bookshelf.service.RobohashClient;
 import com.brash.digital_bookshelf.usecase.ImageUseCase;
@@ -29,6 +30,8 @@ public class ImageUseCaseImpl implements ImageUseCase {
 
     private final ImageService imageService;
 
+    private final S3Properties s3Properties;
+
     @Override
     public S3File getImage(long id, String bucket) {
         Image image = imageService.getById(id);
@@ -38,13 +41,18 @@ public class ImageUseCaseImpl implements ImageUseCase {
     @SneakyThrows
     @Override
     public Image getProfileImageFromRobohash(User user) {
-        MultipartFile file = robohashClient.getImage(user.getUsername() + user.getPassword() + user.getName());
+        S3File file = robohashClient.getImage(user.getUsername() + user.getPassword());
 
         if (file == null) return null;
 
         Image image = new Image()
                 .setExtension("png")
-                .setBlurhash(getHashForFile(file.getBytes()));
+                .setBlurhash(getHashForFile(file.getContent()));
+
+        image = imageRepository.save(image);
+
+        file.setFilename(image.getId() + ".png");
+        fileService.save(file, s3Properties.getProfileImageBucket());
 
         return imageRepository.save(image);
     }

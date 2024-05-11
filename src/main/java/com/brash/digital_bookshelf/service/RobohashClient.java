@@ -1,5 +1,6 @@
 package com.brash.digital_bookshelf.service;
 
+import com.brash.digital_bookshelf.s3storage.S3File;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,8 @@ public class RobohashClient {
     private String set;
 
     @SneakyThrows
-    public MultipartFile getImage(String hash) {
-        ResponseEntity<MultipartFile> response = robohashRestClient
+    public S3File getImage(String hash) {
+        ResponseEntity<byte[]> response = robohashRestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/" + hash)
@@ -29,11 +30,9 @@ public class RobohashClient {
                         .build()
                 )
                 .retrieve()
-                .toEntity(MultipartFile.class);
+                .toEntity(byte[].class);
         if (response.getStatusCode().is2xxSuccessful()) {
-            MultipartFile file = response.getBody();
-            assert file != null;
-            return file;
+            return new S3File(response.getBody());
         } else {
             log.error(response.getStatusCode().toString());
             return null;

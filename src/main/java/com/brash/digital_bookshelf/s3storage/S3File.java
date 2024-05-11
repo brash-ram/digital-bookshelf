@@ -1,8 +1,10 @@
 package com.brash.digital_bookshelf.s3storage;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class S3File {
     private String filename;
     private byte[] content;

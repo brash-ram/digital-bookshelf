@@ -52,18 +52,21 @@ public class User implements UserDetails {
     @JoinColumn(name = "profile_image_id")
     private Image profileImage;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "showBirthType")
+    @Column(name = "showBirthType", nullable = false)
     @Enumerated(EnumType.STRING)
     private ShowBirthType showBirthType;
 
-    @Column(name = "gender")
+    @Column(name = "birth")
+    private Date birth;
+
+    @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "lifeStatus")
+    @Column(name = "lifeStatus", length = 500)
     private String lifeStatus;
 
     @Column(name = "about", length = 10000)

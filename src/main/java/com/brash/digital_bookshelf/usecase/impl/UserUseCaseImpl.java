@@ -33,6 +33,7 @@ public class UserUseCaseImpl implements UserUseCase {
         user.setGender(dto.gender());
         user.setShowBirthType(dto.showBirthType());
         user.setLifeStatus(dto.lifeStatus());
+        user.setBirth(dto.birth());
 
         userRepository.save(user);
     }

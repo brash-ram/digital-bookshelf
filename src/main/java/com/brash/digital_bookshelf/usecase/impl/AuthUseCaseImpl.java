@@ -3,7 +3,9 @@ package com.brash.digital_bookshelf.usecase.impl;
 import com.brash.digital_bookshelf.data.entity.AuthorityRole;
 import com.brash.digital_bookshelf.data.entity.Image;
 import com.brash.digital_bookshelf.data.entity.User;
+import com.brash.digital_bookshelf.data.enums.Gender;
 import com.brash.digital_bookshelf.data.enums.Role;
+import com.brash.digital_bookshelf.data.enums.ShowBirthType;
 import com.brash.digital_bookshelf.data.repository.AuthorityRoleRepository;
 import com.brash.digital_bookshelf.data.repository.UserRepository;
 import com.brash.digital_bookshelf.data.service.UserService;
@@ -56,7 +58,7 @@ public class AuthUseCaseImpl implements AuthUseCase {
     @Override
     public AuthResponse signIn(String username, String password) {
         User user = userService.getByUsername(username);
-        if (!passwordEncoder.matches(username, user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResourceNotFoundException("User with this password is not found");
         }
         setAuthentication(user);
@@ -72,7 +74,9 @@ public class AuthUseCaseImpl implements AuthUseCase {
                 .setUsername(username)
                 .setPassword(passwordEncoder.encode(password))
                 .setName(generateName())
-                .setRoles(getDefaultRoles());
+                .setRoles(getDefaultRoles())
+                .setGender(Gender.NOT_SHOW)
+                .setShowBirthType(ShowBirthType.NOT_SHOW);
 
         Image profileImage = imageUseCase.getProfileImageFromRobohash(user);
         user.setProfileImage(profileImage);

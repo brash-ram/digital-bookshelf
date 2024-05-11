@@ -11,6 +11,7 @@ public class BasicApiResponse<T> {
         this.error = error;
         this.result = result;
     }
+
     public BasicApiResponse(T result) {
         this.error = false;
         this.result = result;

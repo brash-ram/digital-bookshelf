@@ -5,6 +5,8 @@ import com.brash.digital_bookshelf.data.enums.ShowBirthType;
 import com.brash.digital_bookshelf.dto.image.ImageDTO;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class UserInfo{
         Long id;
@@ -28,4 +30,6 @@ public class UserInfo{
         String refSite;
         
         String refEmail;
+
+        Date birth;
 }
