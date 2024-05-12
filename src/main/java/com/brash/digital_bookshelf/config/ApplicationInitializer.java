@@ -3,6 +3,7 @@ package com.brash.digital_bookshelf.config;
 import com.brash.digital_bookshelf.data.entity.AuthorityRole;
 import com.brash.digital_bookshelf.data.enums.Role;
 import com.brash.digital_bookshelf.data.repository.AuthorityRoleRepository;
+import com.brash.digital_bookshelf.data.repository.UserRepository;
 import com.brash.digital_bookshelf.s3storage.S3Client;
 import com.brash.digital_bookshelf.s3storage.config.S3Properties;
 import com.brash.digital_bookshelf.usecase.AuthUseCase;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ApplicationInitializer implements CommandLineRunner {
 
     private final AuthorityRoleRepository authorityRoleRepository;
+    private final UserRepository userRepository;
 
     private final AuthUseCase authUseCase;
 
@@ -31,6 +33,7 @@ public class ApplicationInitializer implements CommandLineRunner {
     public void run(String... args) {
         insertAuthorityRoles();
         initBuckets();
+        setAdminUser();
     }
 
     void initBuckets() {
@@ -52,6 +55,9 @@ public class ApplicationInitializer implements CommandLineRunner {
     }
 
     void setAdminUser() {
-        authUseCase.signUp("admin", "admin");
+        String username = "1@r.r";
+        if (!userRepository.existsByUsername(username)) {
+            authUseCase.createAdmin(username, "1");
+        }
     }
 }

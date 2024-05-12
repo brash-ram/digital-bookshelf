@@ -1,7 +1,11 @@
 package com.brash.digital_bookshelf.usecase.impl;
 
+import com.brash.digital_bookshelf.data.entity.AuthorInfo;
 import com.brash.digital_bookshelf.data.entity.User;
+import com.brash.digital_bookshelf.data.enums.Role;
+import com.brash.digital_bookshelf.data.repository.AuthorInfoRepository;
 import com.brash.digital_bookshelf.data.repository.UserRepository;
+import com.brash.digital_bookshelf.data.service.RoleService;
 import com.brash.digital_bookshelf.dto.user.ChangeUserInfoRequest;
 import com.brash.digital_bookshelf.dto.user.ChangeUserRefsRequest;
 import com.brash.digital_bookshelf.s3storage.S3Client;
@@ -21,7 +25,9 @@ public class UserUseCaseImpl implements UserUseCase {
 
     private final UserRepository userRepository;
 
-    private final S3Properties s3Properties;
+    private final AuthorInfoRepository authorInfoRepository;
+
+    private final RoleService roleService;
 
     @Transactional
     @Override
@@ -49,5 +55,19 @@ public class UserUseCaseImpl implements UserUseCase {
         user.setRefEmail(dto.refEmail());
 
         userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void createAuthor() {
+        User user = authUtils.getUserEntity();
+
+        AuthorInfo authorInfo = new AuthorInfo()
+                .setUser(user);
+
+        roleService.granted(user, Role.AUTHOR);
+
+        userRepository.save(user);
+        authorInfoRepository.save(authorInfo);
     }
 }

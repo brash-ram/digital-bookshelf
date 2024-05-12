@@ -12,10 +12,7 @@ import com.brash.digital_bookshelf.data.service.UserService;
 import com.brash.digital_bookshelf.dto.auth.AuthResponse;
 import com.brash.digital_bookshelf.exception.AccessDeniedException;
 import com.brash.digital_bookshelf.exception.ResourceNotFoundException;
-import com.brash.digital_bookshelf.s3storage.S3File;
 import com.brash.digital_bookshelf.security.jwt.JwtTokenProvider;
-import com.brash.digital_bookshelf.service.FileService;
-import com.brash.digital_bookshelf.service.RobohashClient;
 import com.brash.digital_bookshelf.usecase.AuthUseCase;
 import com.brash.digital_bookshelf.usecase.ImageUseCase;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 import java.util.Set;
@@ -87,6 +85,27 @@ public class AuthUseCaseImpl implements AuthUseCase {
                 jwtTokenProvider.createAccessToken(user.getId()),
                 jwtTokenProvider.createRefreshToken(user.getId())
         );
+    }
+
+    @Transactional
+    @Override
+    public void createAdmin(String username, String password) {
+        User user = new User()
+                .setUsername(username)
+                .setPassword(passwordEncoder.encode(password))
+                .setName(generateName())
+                .setRoles(Set.of(
+                        authorityRoleRepository.getAuthorityRoleByName(Role.ADMIN),
+                        authorityRoleRepository.getAuthorityRoleByName(Role.USER),
+                        authorityRoleRepository.getAuthorityRoleByName(Role.AUTHOR)
+                ))
+                .setGender(Gender.NOT_SHOW)
+                .setShowBirthType(ShowBirthType.NOT_SHOW);
+
+        Image profileImage = imageUseCase.getProfileImageFromRobohash(user);
+        user.setProfileImage(profileImage);
+
+        userRepository.save(user);
     }
 
     private void setAuthentication(User user) {

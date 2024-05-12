@@ -16,8 +16,7 @@ import java.util.UUID;
 public class Image {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_gen")
-    @SequenceGenerator(name = "image_gen", sequenceName = "image_seq", allocationSize = 20)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 

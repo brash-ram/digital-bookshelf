@@ -7,4 +7,6 @@ public interface UserUseCase {
     void changeUserInfo(ChangeUserInfoRequest request);
 
     void changeUserRefs(ChangeUserRefsRequest request);
+
+    void createAuthor();
 }

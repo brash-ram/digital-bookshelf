@@ -6,5 +6,5 @@ import lombok.Data;
 public class EmptyApiResponse {
     private boolean error = false;
     private boolean isEmpty = false;
-    private String result = "";
+    private boolean result = true;
 }

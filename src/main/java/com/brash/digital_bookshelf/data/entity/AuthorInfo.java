@@ -1,13 +1,15 @@
 package com.brash.digital_bookshelf.data.entity;
 
-import com.brash.digital_bookshelf.data.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.security.core.GrantedAuthority;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,21 +17,24 @@ import org.springframework.security.core.GrantedAuthority;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Entity
-@Table(name = "roles")
-public class AuthorityRole implements GrantedAuthority {
-
+@Table(name = "author_info")
+public class AuthorInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "name", length = 20)
-    private Role name;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Override
-    public String getAuthority() {
-        return "ROLE_" + name;
-//        STR."ROLE_\{name}";
-    }
+    @OneToMany(mappedBy = "author")
+    private Set<Book> books;
+
+    @OneToMany(mappedBy = "author")
+    private Set<BookSeries> series;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Date createdAt;
 }

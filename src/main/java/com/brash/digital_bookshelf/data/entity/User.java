@@ -26,8 +26,7 @@ import java.util.*;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
-    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 20)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -52,10 +51,13 @@ public class User implements UserDetails {
     @JoinColumn(name = "profile_image_id")
     private Image profileImage;
 
+    @OneToOne(mappedBy = "user")
+    private AuthorInfo authorInfo;
+
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "showBirthType", nullable = false)
+    @Column(name = "show_birth_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ShowBirthType showBirthType;
 
@@ -66,22 +68,22 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "lifeStatus", length = 500)
+    @Column(name = "life_status", length = 500)
     private String lifeStatus;
 
     @Column(name = "about", length = 10000)
     private String about;
 
-    @Column(name = "refVk")
+    @Column(name = "ref_vk")
     private String refVk;
 
-    @Column(name = "refTg")
+    @Column(name = "ref_tg")
     private String refTg;
 
-    @Column(name = "refSite")
+    @Column(name = "ref_site")
     private String refSite;
 
-    @Column(name = "refEmail")
+    @Column(name = "ref_email")
     private String refEmail;
 
     @CreationTimestamp

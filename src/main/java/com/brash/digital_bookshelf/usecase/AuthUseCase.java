@@ -10,5 +10,4 @@ public interface AuthUseCase {
 
     AuthResponse signUp(String username, String password);
 
-
-}
+    void createAdmin(String username, String password);}

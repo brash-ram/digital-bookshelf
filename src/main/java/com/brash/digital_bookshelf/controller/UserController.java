@@ -48,4 +48,10 @@ public class UserController {
     public ResponseEntity<BasicApiResponse<UserInfo>> me() {
         return ResponseEntity.ok(new BasicApiResponse<>(userMapper.toInfoDto(authUtils.getUserEntity())));
     }
+
+    @GetMapping("/change/author")
+    public ResponseEntity<EmptyApiResponse> createAuthor() {
+        userUseCase.createAuthor();
+        return ResponseEntity.ok(new EmptyApiResponse());
+    }
 }
