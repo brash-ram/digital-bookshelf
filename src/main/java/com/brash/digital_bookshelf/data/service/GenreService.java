@@ -9,5 +9,7 @@ public interface GenreService {
 
     void add(String name);
 
+    void delete(String name);
+
     List<Genre> getAll();
 }

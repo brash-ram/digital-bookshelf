@@ -4,8 +4,6 @@ import com.brash.digital_bookshelf.data.entity.Genre;
 import com.brash.digital_bookshelf.data.service.GenreService;
 import com.brash.digital_bookshelf.dto.BasicApiResponse;
 import com.brash.digital_bookshelf.dto.EmptyApiResponse;
-import com.brash.digital_bookshelf.dto.genre.GenreDto;
-import com.brash.digital_bookshelf.utils.mappers.GenreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +17,10 @@ public class GenreController {
 
     private final GenreService genreService;
 
-    private final GenreMapper genreMapper;
-
     @GetMapping("/public/genre/{id}")
-    public ResponseEntity<BasicApiResponse<GenreDto>> get(@PathVariable long id) {
+    public ResponseEntity<BasicApiResponse<String>> get(@PathVariable long id) {
         Genre genre = genreService.getById(id);
-        return ResponseEntity.ok(new BasicApiResponse<>(genreMapper.map(genre)));
+        return ResponseEntity.ok(new BasicApiResponse<>(genre.getName()));
     }
 
     @PostMapping("/admin/genre")
@@ -33,13 +29,19 @@ public class GenreController {
         return ResponseEntity.ok(new EmptyApiResponse());
     }
 
+    @PostMapping("/admin/genre/delete")
+    public ResponseEntity<EmptyApiResponse> delete(@RequestParam String name) {
+        genreService.delete(name);
+        return ResponseEntity.ok(new EmptyApiResponse());
+    }
+
     @GetMapping("/public/genre/all")
-    public ResponseEntity<BasicApiResponse<List<GenreDto>>> get() {
+    public ResponseEntity<BasicApiResponse<List<String>>> get() {
         List<Genre> genres = genreService.getAll();
         return ResponseEntity.ok(
                 new BasicApiResponse<>(
                         genres.stream()
-                                .map(genreMapper::map)
+                                .map(Genre::getName)
                                 .toList()
                 )
         );

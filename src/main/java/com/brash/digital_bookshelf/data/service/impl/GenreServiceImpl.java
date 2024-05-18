@@ -32,6 +32,12 @@ public class GenreServiceImpl implements GenreService {
         genreRepository.save(genre);
     }
 
+    @Transactional
+    @Override
+    public void delete(String name) {
+        genreRepository.deleteByName(name);
+    }
+
     @Override
     public List<Genre> getAll() {
         return genreRepository.findAll();
