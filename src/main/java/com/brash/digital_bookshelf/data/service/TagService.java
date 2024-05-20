@@ -9,4 +9,6 @@ public interface TagService {
     Tag getById(long id);
 
     List<Tag> getAll();
+
+    List<Tag> getAllByNames(List<String> names);
 }

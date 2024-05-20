@@ -10,6 +10,8 @@ public interface BookSeriesService {
 
     void add(String name, String description);
 
+    void update(long id, String name, String description);
+
     void delete(long id);
 
     List<BookSeries> mySeries();

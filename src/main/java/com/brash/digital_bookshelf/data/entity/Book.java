@@ -69,10 +69,17 @@ public class Book {
     @Column(name = "price")
     private Long price;
 
+    @Column(name = "extension", nullable = false)
+    private String extension;
+
     @Column(name = "last_update")
     private DateTime lastUpdate;
 
     @CreationTimestamp
     @Column(updatable = false)
     private Date createdAt;
+
+    public String getFilenameWithExtension(){
+        return this.id + "." + this.getExtension();
+    }
 }

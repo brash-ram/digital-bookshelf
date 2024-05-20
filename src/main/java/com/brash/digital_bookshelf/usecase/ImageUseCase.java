@@ -8,4 +8,6 @@ public interface ImageUseCase {
     Image getProfileImageFromRobohash(User user);
 
     S3File getImage(long id, String bucket);
+
+    Image saveImage(String extension, byte[] content, String bucket);
 }

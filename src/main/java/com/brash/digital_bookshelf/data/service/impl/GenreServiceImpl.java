@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,5 +42,20 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public List<Genre> getAll() {
         return genreRepository.findAll();
+    }
+
+    @Override
+    public List<Genre> getByNames(List<String> names) {
+        List<Genre> genres = new ArrayList<>();
+        for (String name : names) {
+            genres.add(
+                    genreRepository.findByName(name).orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    String.format("Genre with name: %s -- is not found", name)
+                            )
+                    )
+            );
+        }
+        return genres;
     }
 }

@@ -1,7 +1,6 @@
 package com.brash.digital_bookshelf.controller;
 
 import com.brash.digital_bookshelf.data.entity.BookSeries;
-import com.brash.digital_bookshelf.data.entity.Genre;
 import com.brash.digital_bookshelf.data.service.BookSeriesService;
 import com.brash.digital_bookshelf.dto.BasicApiResponse;
 import com.brash.digital_bookshelf.dto.EmptyApiResponse;
@@ -22,25 +21,35 @@ public class BookSeriesController {
 
     private final BookSeriesMapper bookSeriesMapper;
 
-    @GetMapping("/public/genre/{id}")
+    @GetMapping("/public/bookSeries/{id}")
     public ResponseEntity<BasicApiResponse<BookSeriesDto>> get(@PathVariable long id) {
         BookSeries series = bookSeriesService.getById(id);
         return ResponseEntity.ok(new BasicApiResponse<>(bookSeriesMapper.toDto(series)));
     }
 
-    @PostMapping("/admin/genre")
+    @PostMapping("/private/bookSeries")
     public ResponseEntity<EmptyApiResponse> add(@RequestParam String name, @RequestParam String description) {
         bookSeriesService.add(name, description);
         return ResponseEntity.ok(new EmptyApiResponse());
     }
 
-    @PostMapping("/admin/genre/delete")
+    @PostMapping("/private/bookSeries/update")
+    public ResponseEntity<EmptyApiResponse> update(
+            @RequestParam long id,
+            @RequestParam String name,
+            @RequestParam String description
+    ) {
+        bookSeriesService.update(id, name, description);
+        return ResponseEntity.ok(new EmptyApiResponse());
+    }
+
+    @PostMapping("/private/bookSeries/delete")
     public ResponseEntity<EmptyApiResponse> delete(@RequestParam long id) {
         bookSeriesService.delete(id);
         return ResponseEntity.ok(new EmptyApiResponse());
     }
 
-    @GetMapping("/public/genre/my")
+    @GetMapping("/private/bookSeries/my")
     public ResponseEntity<BasicApiResponse<List<BookSeriesDto>>> mySeries() {
         List<BookSeries> series = bookSeriesService.mySeries();
         return ResponseEntity.ok(
@@ -50,7 +59,7 @@ public class BookSeriesController {
         );
     }
 
-    @GetMapping("/public/genre/author/{id}")
+    @GetMapping("/public/bookSeries/author/{id}")
     public ResponseEntity<BasicApiResponse<List<BookSeriesDto>>> seriesByAuthor(@PathVariable long id) {
         List<BookSeries> series = bookSeriesService.authorSeries(id);
         return ResponseEntity.ok(

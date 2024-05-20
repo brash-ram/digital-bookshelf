@@ -12,4 +12,6 @@ public interface GenreService {
     void delete(String name);
 
     List<Genre> getAll();
+
+    List<Genre> getByNames(List<String> genres);
 }

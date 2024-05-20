@@ -7,6 +7,7 @@ import com.brash.digital_bookshelf.exception.ResourceNotFoundException;
 import com.brash.digital_bookshelf.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +37,14 @@ public class BookSeriesServiceImpl implements BookSeriesService {
                         .setDescription(description)
                         .setAuthor(authUtils.getUserEntity().getAuthorInfo())
         );
+    }
+
+    @Transactional
+    @Override
+    public void update(long id, String name, String description) {
+        BookSeries series = this.getById(id);
+        series.setName(name).setDescription(description);
+        bookSeriesRepository.save(series);
     }
 
     @Override

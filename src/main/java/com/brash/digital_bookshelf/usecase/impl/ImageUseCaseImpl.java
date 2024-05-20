@@ -14,6 +14,7 @@ import io.trbl.blurhash.BlurHash;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -38,6 +39,21 @@ public class ImageUseCaseImpl implements ImageUseCase {
         return fileService.get(image.getFilenameWithExtension(), bucket);
     }
 
+    @Transactional
+    @Override
+    public Image saveImage(String extension, byte[] content, String bucket) {
+        Image image = new Image()
+                .setExtension(extension)
+                .setBlurhash(getHashForFile(content));
+
+        image = imageRepository.save(image);
+
+        S3File file = new S3File(image.getId() + "." + extension, content);
+        fileService.save(file, bucket);
+
+        return image;
+    }
+
     @SneakyThrows
     @Override
     public Image getProfileImageFromRobohash(User user) {
@@ -54,7 +70,7 @@ public class ImageUseCaseImpl implements ImageUseCase {
         file.setFilename(image.getId() + ".png");
         fileService.save(file, s3Properties.getProfileImageBucket());
 
-        return imageRepository.save(image);
+        return image;
     }
     private String getHashForFile(byte[] file) {
         BufferedImage bfImage = ImageUtils.byteArrayToBufferedImage(file);

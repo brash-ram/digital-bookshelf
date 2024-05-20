@@ -36,7 +36,7 @@ public class GenreController {
     }
 
     @GetMapping("/public/genre/all")
-    public ResponseEntity<BasicApiResponse<List<String>>> get() {
+    public ResponseEntity<BasicApiResponse<List<String>>> getAll() {
         List<Genre> genres = genreService.getAll();
         return ResponseEntity.ok(
                 new BasicApiResponse<>(
