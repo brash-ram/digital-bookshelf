@@ -38,8 +38,7 @@ public class ApplicationInitializer implements CommandLineRunner {
 
     void initBuckets() {
         minioClient.createBucketIfNotExist(s3Properties.getBookBucket());
-        minioClient.createBucketIfNotExist(s3Properties.getBookImageBucket());
-        minioClient.createBucketIfNotExist(s3Properties.getProfileImageBucket());
+        minioClient.createBucketIfNotExist(s3Properties.getImageBucket());
     }
 
     void insertAuthorityRoles() {

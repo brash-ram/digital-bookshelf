@@ -34,14 +34,14 @@ public class ImageUseCaseImpl implements ImageUseCase {
     private final S3Properties s3Properties;
 
     @Override
-    public S3File getImage(long id, String bucket) {
+    public S3File getImage(long id) {
         Image image = imageService.getById(id);
-        return fileService.get(image.getFilenameWithExtension(), bucket);
+        return fileService.get(image.getFilenameWithExtension(), s3Properties.getImageBucket());
     }
 
     @Transactional
     @Override
-    public Image saveImage(String extension, byte[] content, String bucket) {
+    public Image saveImage(String extension, byte[] content) {
         Image image = new Image()
                 .setExtension(extension)
                 .setBlurhash(getHashForFile(content));
@@ -49,7 +49,7 @@ public class ImageUseCaseImpl implements ImageUseCase {
         image = imageRepository.save(image);
 
         S3File file = new S3File(image.getId() + "." + extension, content);
-        fileService.save(file, bucket);
+        fileService.save(file, s3Properties.getImageBucket());
 
         return image;
     }
@@ -68,7 +68,7 @@ public class ImageUseCaseImpl implements ImageUseCase {
         image = imageRepository.save(image);
 
         file.setFilename(image.getId() + ".png");
-        fileService.save(file, s3Properties.getProfileImageBucket());
+        fileService.save(file, s3Properties.getImageBucket());
 
         return image;
     }

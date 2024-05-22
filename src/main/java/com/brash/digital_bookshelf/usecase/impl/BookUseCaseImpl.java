@@ -48,6 +48,8 @@ public class BookUseCaseImpl implements BookUseCase {
 
     private final ImageService imageService;
 
+    private final UserService userService;
+
     @Transactional
     @Override
     public long createNewBook(CreateBook newBook) {
@@ -76,9 +78,11 @@ public class BookUseCaseImpl implements BookUseCase {
         return book.getId();
     }
 
+    @Transactional
     @Override
     public List<Book> myBooks() {
-        return new ArrayList<>(authUtils.getUserEntity().getAuthorInfo().getBooks());
+        User user = userService.getById(authUtils.getUserEntity().getId());
+        return new ArrayList<>(user.getAuthorInfo().getBooks());
     }
 
     @Transactional

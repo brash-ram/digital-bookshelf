@@ -22,11 +22,9 @@ public class ImageController {
 
     private final ImageUseCase imageUseCase;
 
-    private final S3Properties s3Properties;
-
-    @GetMapping("/public/image/user/{id}")
-    public ResponseEntity<byte[]> getById(@PathVariable("id") long id) {
-        S3File image = imageUseCase.getImage(id, s3Properties.getProfileImageBucket());
+    @GetMapping("/public/image/{id}")
+    public ResponseEntity<byte[]> getUserImage(@PathVariable("id") long id) {
+        S3File image = imageUseCase.getImage(id);
         String contentType = URLConnection.guessContentTypeFromName("." + image.getFilename().split("\\.")[1]);
 
         return ResponseEntity
@@ -37,7 +35,7 @@ public class ImageController {
 
     @PostMapping(value = "/private/image/book", consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<BasicApiResponse<Long>> upload(HttpServletRequest req, @RequestParam String extension, @RequestBody byte[] file) throws IOException {
-        Image image = imageUseCase.saveImage(extension, file, s3Properties.getBookImageBucket());
+        Image image = imageUseCase.saveImage(extension, file);
 
         return ResponseEntity
                 .ok(new BasicApiResponse<>(image.getId()));

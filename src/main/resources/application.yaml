@@ -39,8 +39,7 @@ s3-aws:
   accessKey: ${MINIO_USER}
   secretKey: ${MINIO_PASSWORD}
   bookBucket: books
-  book-image-bucket: book-images
-  profile-image-bucket: profile-images
+  image-bucket: images
 
 typesense:
   protocol: http

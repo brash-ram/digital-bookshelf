@@ -24,6 +24,7 @@ public class BookSeriesMapper {
     }
 
     public BookSeriesSimpleDto toSimple(BookSeries series) {
+        if (series == null) return null;
         return modelMapper.map(series, BookSeriesSimpleDto.class);
     }
 

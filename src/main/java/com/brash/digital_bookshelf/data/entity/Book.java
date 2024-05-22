@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.joda.time.DateTime;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
@@ -72,8 +74,8 @@ public class Book {
     @Column(name = "extension", nullable = false)
     private String extension;
 
-    @Column(name = "last_update")
-    private DateTime lastUpdate;
+    @UpdateTimestamp
+    private Timestamp lastUpdate;
 
     @CreationTimestamp
     @Column(updatable = false)

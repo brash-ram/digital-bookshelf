@@ -1,11 +1,13 @@
 package com.brash.digital_bookshelf.usecase.impl;
 
+import com.brash.digital_bookshelf.data.entity.AuthorInfo;
 import com.brash.digital_bookshelf.data.entity.AuthorityRole;
 import com.brash.digital_bookshelf.data.entity.Image;
 import com.brash.digital_bookshelf.data.entity.User;
 import com.brash.digital_bookshelf.data.enums.Gender;
 import com.brash.digital_bookshelf.data.enums.Role;
 import com.brash.digital_bookshelf.data.enums.ShowBirthType;
+import com.brash.digital_bookshelf.data.repository.AuthorInfoRepository;
 import com.brash.digital_bookshelf.data.repository.AuthorityRoleRepository;
 import com.brash.digital_bookshelf.data.repository.UserRepository;
 import com.brash.digital_bookshelf.data.service.UserService;
@@ -41,6 +43,8 @@ public class AuthUseCaseImpl implements AuthUseCase {
     private final PasswordEncoder passwordEncoder;
 
     private final ImageUseCase imageUseCase;
+
+    private final AuthorInfoRepository authorInfoRepository;
 
     private final Random random = new Random();
 
@@ -101,6 +105,11 @@ public class AuthUseCaseImpl implements AuthUseCase {
                 ))
                 .setGender(Gender.NOT_SHOW)
                 .setShowBirthType(ShowBirthType.NOT_SHOW);
+
+        AuthorInfo authorInfo = new AuthorInfo()
+                .setUser(user);
+
+        authorInfoRepository.save(authorInfo);
 
         Image profileImage = imageUseCase.getProfileImageFromRobohash(user);
         user.setProfileImage(profileImage);

@@ -5,6 +5,7 @@ import com.brash.digital_bookshelf.data.service.BookService;
 import com.brash.digital_bookshelf.dto.BasicApiResponse;
 import com.brash.digital_bookshelf.dto.EmptyApiResponse;
 import com.brash.digital_bookshelf.dto.book.BookDto;
+import com.brash.digital_bookshelf.dto.book.BookListItem;
 import com.brash.digital_bookshelf.dto.book.CreateBook;
 import com.brash.digital_bookshelf.usecase.BookUseCase;
 import com.brash.digital_bookshelf.utils.mappers.BookMapper;
@@ -48,14 +49,14 @@ public class BookController {
     }
 
     @GetMapping("/private/book/my")
-    public ResponseEntity<BasicApiResponse<List<BookDto>>> my() {
+    public ResponseEntity<BasicApiResponse<List<BookListItem>>> my() {
         List<Book> book = bookUseCase.myBooks();
-        return ResponseEntity.ok(new BasicApiResponse<>(bookMapper.toDto(book)));
+        return ResponseEntity.ok(new BasicApiResponse<>(bookMapper.toListItems(book)));
     }
 
     @GetMapping("/public/book/author/{id}")
-    public ResponseEntity<BasicApiResponse<List<BookDto>>> getByAuthor(@PathVariable long id) {
+    public ResponseEntity<BasicApiResponse<List<BookListItem>>> getByAuthor(@PathVariable long id) {
         List<Book> book = bookUseCase.getBooksFromAuthor(id);
-        return ResponseEntity.ok(new BasicApiResponse<>(bookMapper.toDto(book)));
+        return ResponseEntity.ok(new BasicApiResponse<>(bookMapper.toListItems(book)));
     }
 }
