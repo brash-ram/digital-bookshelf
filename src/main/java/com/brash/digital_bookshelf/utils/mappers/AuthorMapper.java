@@ -17,10 +17,14 @@ public class AuthorMapper {
 
     private final ModelMapper modelMapper;
 
+    private final BookMapper bookMapper;
+
+    private final BookSeriesMapper bookSeriesMapper;
+
     public AuthorInfoDto toDto(AuthorInfo author) {
-        AuthorInfoDto dto = modelMapper.map(author, AuthorInfoDto.class);
-        dto.setBookIds(author.getBooks().stream().map(Book::getId).collect(Collectors.toSet()));
-        dto.setSeriesIds(author.getSeries().stream().map(BookSeries::getId).collect(Collectors.toSet()));
-        return dto;
+        return modelMapper.map(author, AuthorInfoDto.class)
+                .setBooks(author.getBooks().stream().map(bookMapper::toListItem).toList())
+                .setSeries(author.getSeries().stream().map(bookSeriesMapper::toSimple).toList())
+                .setUserId(author.getUser().getId());
     }
 }

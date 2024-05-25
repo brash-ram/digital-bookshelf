@@ -18,6 +18,9 @@ public class UserMapper {
         UserInfo userInfo = modelMapper.map(user, UserInfo.class);
         userInfo.setProfileImage(imageMapper.toDto(user.getProfileImage()));
         userInfo.setRoles(user.getEnumRoles());
+        if (user.getAuthorInfo() != null) {
+            userInfo.setAuthorInfoId(user.getAuthorInfo().getId());
+        }
         return userInfo;
     }
 }

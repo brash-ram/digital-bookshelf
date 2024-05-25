@@ -3,6 +3,7 @@ package com.brash.digital_bookshelf.dto.book;
 import com.brash.digital_bookshelf.data.enums.PriceType;
 import com.brash.digital_bookshelf.dto.bookSeries.BookSeriesDto;
 import com.brash.digital_bookshelf.dto.bookSeries.BookSeriesSimpleDto;
+import com.brash.digital_bookshelf.dto.image.ImageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,7 @@ import java.util.List;
 public class BookDto implements Serializable {
     private Long id;
     private Long authorId;
-    private Long coverId;
+    private ImageDTO cover;
     private List<String> genreNames;
     private List<String> tagNames;
     private BookSeriesSimpleDto series;
@@ -31,6 +33,6 @@ public class BookDto implements Serializable {
     private String description;
     private PriceType priceType;
     private Long price;
-    private DateTime lastUpdate;
+    private Timestamp lastUpdate;
     private Date createdAt;
 }

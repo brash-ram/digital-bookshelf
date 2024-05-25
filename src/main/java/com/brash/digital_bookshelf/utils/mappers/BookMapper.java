@@ -28,6 +28,7 @@ public class BookMapper {
         dto
                 .setGenreNames(book.getGenres().stream().map(Genre::getName).toList())
                 .setTagNames(book.getTags().stream().map(Tag::getName).toList())
+                .setCover(imageMapper.toDto(book.getCover()))
                 .setSeries(bookSeriesMapper.toSimple(book.getSeries()));
         return dto;
     }

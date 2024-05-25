@@ -1,6 +1,8 @@
 package com.brash.digital_bookshelf.controller;
 
 import com.brash.digital_bookshelf.data.entity.Image;
+import com.brash.digital_bookshelf.data.entity.User;
+import com.brash.digital_bookshelf.data.service.UserService;
 import com.brash.digital_bookshelf.dto.BasicApiResponse;
 import com.brash.digital_bookshelf.dto.EmptyApiResponse;
 import com.brash.digital_bookshelf.dto.image.ImageDTO;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URLConnection;
 
 @RestController
-@RequestMapping("/api/private/user")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -32,24 +34,32 @@ public class UserController {
 
     private final UserMapper userMapper;
 
-    @PostMapping("/change/info")
+    private final UserService userService;
+
+    @PostMapping("/private/user/change/info")
     public ResponseEntity<EmptyApiResponse> changeUserInfo(@RequestBody ChangeUserInfoRequest request) {
         userUseCase.changeUserInfo(request);
         return ResponseEntity.ok(new EmptyApiResponse());
     }
 
-    @PostMapping("/change/refs")
+    @PostMapping("/private/user/change/refs")
     public ResponseEntity<EmptyApiResponse> changeUserRefs(@RequestBody ChangeUserRefsRequest request) {
         userUseCase.changeUserRefs(request);
         return ResponseEntity.ok(new EmptyApiResponse());
     }
 
-    @GetMapping("/me")
+    @GetMapping("/private/user/me")
     public ResponseEntity<BasicApiResponse<UserInfo>> me() {
         return ResponseEntity.ok(new BasicApiResponse<>(userMapper.toInfoDto(authUtils.getUserEntity())));
     }
 
-    @GetMapping("/change/author")
+    @GetMapping("/public/user/{id}")
+    public ResponseEntity<BasicApiResponse<UserInfo>> getUser(@PathVariable long id) {
+        User user = userService.getById(id);
+        return ResponseEntity.ok(new BasicApiResponse<>(userMapper.toInfoDto(user)));
+    }
+
+    @GetMapping("/private/user/change/author")
     public ResponseEntity<EmptyApiResponse> createAuthor() {
         userUseCase.createAuthor();
         return ResponseEntity.ok(new EmptyApiResponse());
