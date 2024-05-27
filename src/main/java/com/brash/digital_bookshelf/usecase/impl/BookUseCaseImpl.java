@@ -1,10 +1,9 @@
 package com.brash.digital_bookshelf.usecase.impl;
 
-import com.brash.digital_bookshelf.data.entity.AuthorInfo;
-import com.brash.digital_bookshelf.data.entity.Book;
-import com.brash.digital_bookshelf.data.entity.Image;
-import com.brash.digital_bookshelf.data.entity.User;
+import com.brash.digital_bookshelf.data.entity.*;
 import com.brash.digital_bookshelf.data.repository.BookRepository;
+import com.brash.digital_bookshelf.data.repository.PurchasedBookRepository;
+import com.brash.digital_bookshelf.data.repository.UserRepository;
 import com.brash.digital_bookshelf.data.service.*;
 import com.brash.digital_bookshelf.dto.book.CreateBook;
 import com.brash.digital_bookshelf.s3storage.S3File;
@@ -30,7 +29,7 @@ public class BookUseCaseImpl implements BookUseCase {
 
     private final BookService bookService;
 
-    private final ExecutorService executorService;
+    private final PurchasedBookRepository purchasedBookRepository;
 
     private final FileService fileService;
 
@@ -49,6 +48,7 @@ public class BookUseCaseImpl implements BookUseCase {
     private final ImageService imageService;
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -70,10 +70,8 @@ public class BookUseCaseImpl implements BookUseCase {
 
         book = bookRepository.save(book);
 
-//        fileService.save(
-//                new S3File(book.getFilenameWithExtension(), newBook.getBookFile().content()),
-//                s3Properties.getBookBucket()
-//        );
+        user.addBookToLibrary(book);
+        userRepository.save(user);
 
         return book.getId();
     }
@@ -104,5 +102,48 @@ public class BookUseCaseImpl implements BookUseCase {
         );
 
         bookRepository.save(book);
+    }
+
+    @Transactional
+    @Override
+    public void addToLibrary(long id) {
+        User user = userService.getById(authUtils.getUserEntity().getId());
+        Book book = bookService.getById(id);
+        user.addBookToLibrary(book);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void buy(long id) {
+        User user = userService.getById(authUtils.getUserEntity().getId());
+        Book book = bookService.getById(id);
+        PurchasedBook purchasedBook = new PurchasedBook()
+                .setBook(book)
+                .setUser(user)
+                .setPrice(book.getPrice());
+        user.addBookToLibrary(book);
+        userRepository.save(user);
+        purchasedBookRepository.save(purchasedBook);
+    }
+
+    @Transactional
+    @Override
+    public List<Book> getMyLibrary() {
+        User user = userService.getById(authUtils.getUserEntity().getId());
+        return new ArrayList<>(user.getLibrary());
+    }
+
+    @Transactional
+    @Override
+    public List<Book> getLibraryByAuthor(long authorId) {
+        User user = userService.getById(authorId);
+        return new ArrayList<>(user.getLibrary());
+    }
+
+    @Transactional
+    @Override
+    public List<PurchasedBook> getMyPurchasedBooks() {
+        return purchasedBookRepository.findAllByUserId(authUtils.getUserEntity().getId());
     }
 }

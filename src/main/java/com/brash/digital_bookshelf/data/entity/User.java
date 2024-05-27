@@ -86,10 +86,25 @@ public class User implements UserDetails {
     @Column(name = "ref_email")
     private String refEmail;
 
+    @OneToMany(mappedBy = "user")
+    private Set<PurchasedBook> purchasedBooks = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_library",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    private Set<Book> library = new HashSet<>();
+
     @CreationTimestamp
     @Column(updatable = false)
     private Date createdAt;
 
+
+    public void addBookToLibrary(Book book) {
+        library.add(book);
+    }
 
     public List<Role> getEnumRoles() {
         return roles.stream().map(AuthorityRole::getName).toList();

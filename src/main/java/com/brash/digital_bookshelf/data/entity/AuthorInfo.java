@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -29,10 +30,10 @@ public class AuthorInfo {
     private User user;
 
     @OneToMany(mappedBy = "author")
-    private Set<Book> books;
+    private Set<Book> books = new HashSet<>();
 
     @OneToMany(mappedBy = "author")
-    private Set<BookSeries> series;
+    private Set<BookSeries> series = new HashSet<>();
 
     @CreationTimestamp
     @Column(updatable = false)
