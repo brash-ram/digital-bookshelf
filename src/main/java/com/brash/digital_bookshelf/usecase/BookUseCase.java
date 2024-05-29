@@ -24,4 +24,12 @@ public interface BookUseCase {
 
     List<PurchasedBook> getMyPurchasedBooks();
 
+    List<Book> getBooksByGenre(String genre);
+
+    List<Book> getRecommendedBooks();
+
+    List<Book> getHomeRecommendedBooks();
+
+    List<Book> getSimilarBooks(long id);
+
 }

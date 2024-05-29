@@ -75,6 +75,9 @@ public class Book {
     @Column(name = "extension", nullable = false)
     private String extension;
 
+    @OneToMany(mappedBy = "book")
+    private Set<PurchasedBook> purchase = new HashSet<>();
+
     @UpdateTimestamp
     private Timestamp lastUpdate;
 

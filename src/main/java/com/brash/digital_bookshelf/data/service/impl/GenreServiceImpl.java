@@ -58,4 +58,13 @@ public class GenreServiceImpl implements GenreService {
         }
         return genres;
     }
+
+    @Override
+    public Genre getByName(String genre) {
+        return genreRepository.findByName(genre).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        String.format("Genre with name: %s -- is not found", genre)
+                )
+        );
+    }
 }

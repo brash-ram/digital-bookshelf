@@ -14,4 +14,6 @@ public interface GenreService {
     List<Genre> getAll();
 
     List<Genre> getByNames(List<String> genres);
+
+    Genre getByName(String genres);
 }

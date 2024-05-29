@@ -5,6 +5,7 @@ import com.brash.digital_bookshelf.data.service.ImageService;
 import com.brash.digital_bookshelf.data.service.UserService;
 import com.brash.digital_bookshelf.dto.book.BookDto;
 import com.brash.digital_bookshelf.dto.book.BookListItem;
+import com.brash.digital_bookshelf.dto.book.BookName;
 import com.brash.digital_bookshelf.dto.book.PurchasedBookDto;
 import com.brash.digital_bookshelf.dto.image.ImageDTO;
 import com.brash.digital_bookshelf.utils.AuthUtils;
@@ -29,14 +30,19 @@ public class BookMapper {
     private final AuthUtils authUtils;
 
     public BookDto toDto(Book book) {
-        User user = userService.getById(authUtils.getUserEntity().getId());
+        boolean isInLibrary = false;
+        if (authUtils.getUserDetailsOrNull().isPresent()) {
+            User user = userService.getById(authUtils.getUserEntity().getId());
+            isInLibrary = user.getLibrary().contains(book);
+        }
         BookDto dto = modelMapper.map(book, BookDto.class);
         dto
                 .setGenreNames(book.getGenres().stream().map(Genre::getName).toList())
                 .setTagNames(book.getTags().stream().map(Tag::getName).toList())
                 .setCover(imageMapper.toDto(book.getCover()))
                 .setSeries(bookSeriesMapper.toSimple(book.getSeries()))
-                .setInLibrary(user.getLibrary().contains(book));
+                .setInLibrary(isInLibrary)
+                .setNumberPurchase(book.getPurchase().size());
         return dto;
     }
 
@@ -62,5 +68,13 @@ public class BookMapper {
 
     public List<BookListItem> toListItems(List<Book> books) {
         return books.stream().map(this::toListItem).toList();
+    }
+
+    public BookName toName(Book book) {
+        return modelMapper.map(book, BookName.class);
+    }
+
+    public List<BookName> toName(List<Book> books) {
+        return books.stream().map(this::toName).toList();
     }
 }

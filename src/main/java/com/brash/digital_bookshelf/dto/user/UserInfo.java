@@ -3,6 +3,7 @@ package com.brash.digital_bookshelf.dto.user;
 import com.brash.digital_bookshelf.data.enums.Gender;
 import com.brash.digital_bookshelf.data.enums.Role;
 import com.brash.digital_bookshelf.data.enums.ShowBirthType;
+import com.brash.digital_bookshelf.dto.book.BookListItem;
 import com.brash.digital_bookshelf.dto.image.ImageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,5 +32,6 @@ public class UserInfo{
         private List<Role> roles;
         @Nullable
         private Long authorInfoId;
+        private List<BookListItem> library;
 
 }

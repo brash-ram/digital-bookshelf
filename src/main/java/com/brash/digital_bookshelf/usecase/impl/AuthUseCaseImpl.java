@@ -5,6 +5,7 @@ import com.brash.digital_bookshelf.data.entity.AuthorityRole;
 import com.brash.digital_bookshelf.data.entity.Image;
 import com.brash.digital_bookshelf.data.entity.User;
 import com.brash.digital_bookshelf.data.enums.Gender;
+import com.brash.digital_bookshelf.data.enums.RecommendationMarks;
 import com.brash.digital_bookshelf.data.enums.Role;
 import com.brash.digital_bookshelf.data.enums.ShowBirthType;
 import com.brash.digital_bookshelf.data.repository.AuthorInfoRepository;
@@ -12,9 +13,12 @@ import com.brash.digital_bookshelf.data.repository.AuthorityRoleRepository;
 import com.brash.digital_bookshelf.data.repository.UserRepository;
 import com.brash.digital_bookshelf.data.service.UserService;
 import com.brash.digital_bookshelf.dto.auth.AuthResponse;
+import com.brash.digital_bookshelf.dto.recommendation.MarkRabbitDTO;
+import com.brash.digital_bookshelf.dto.recommendation.UserRabbitDTO;
 import com.brash.digital_bookshelf.exception.AccessDeniedException;
 import com.brash.digital_bookshelf.exception.ResourceNotFoundException;
 import com.brash.digital_bookshelf.security.jwt.JwtTokenProvider;
+import com.brash.digital_bookshelf.service.RecommendationRabbitProducer;
 import com.brash.digital_bookshelf.usecase.AuthUseCase;
 import com.brash.digital_bookshelf.usecase.ImageUseCase;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +49,8 @@ public class AuthUseCaseImpl implements AuthUseCase {
     private final ImageUseCase imageUseCase;
 
     private final AuthorInfoRepository authorInfoRepository;
+
+    private final RecommendationRabbitProducer recommendation;
 
     private final Random random = new Random();
 
@@ -85,6 +91,11 @@ public class AuthUseCaseImpl implements AuthUseCase {
 
         user = userRepository.save(user);
         setAuthentication(user);
+
+        recommendation.sendUser(new UserRabbitDTO(
+                user.getId()
+        ));
+
         return new AuthResponse(
                 jwtTokenProvider.createAccessToken(user.getId()),
                 jwtTokenProvider.createRefreshToken(user.getId())
@@ -115,6 +126,10 @@ public class AuthUseCaseImpl implements AuthUseCase {
         user.setProfileImage(profileImage);
 
         userRepository.save(user);
+
+        recommendation.sendUser(new UserRabbitDTO(
+                user.getId()
+        ));
     }
 
     private void setAuthentication(User user) {

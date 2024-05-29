@@ -36,4 +36,5 @@ public class BookDto implements Serializable {
     private Timestamp lastUpdate;
     private Date createdAt;
     private boolean isInLibrary;
+    private long numberPurchase;
 }
